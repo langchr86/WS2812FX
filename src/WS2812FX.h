@@ -34,8 +34,11 @@
   2017-02-02   added external trigger functionality (e.g. for sound-to-light)
 */
 
+
 #ifndef WS2812FX_h
 #define WS2812FX_h
+
+#include <FastLED.h>
 
 #define FSH(x) (__FlashStringHelper*)(x)
 
@@ -330,7 +333,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       uint16_t aux_param3; // auxilary param (usually stores a segment index)
     } segment_runtime;
 
-    WS2812FX(uint16_t n, uint8_t p, neoPixelType t) : Adafruit_NeoPixel(n, p, t) {
+    WS2812FX(uint16_t n, CRGB* l, uint8_t p, neoPixelType t) : Adafruit_NeoPixel(n, p, t) {
       _mode[FX_MODE_STATIC]                  = &WS2812FX::mode_static;
       _mode[FX_MODE_BLINK]                   = &WS2812FX::mode_blink;
       _mode[FX_MODE_COLOR_WIPE]              = &WS2812FX::mode_color_wipe;
@@ -409,6 +412,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       _segments[0].stop = n - 1;
       _segments[0].speed = DEFAULT_SPEED;
       resetSegmentRuntimes();
+	  leds = l;
     }
 
     void
@@ -596,6 +600,7 @@ class WS2812FX : public Adafruit_NeoPixel {
       []{ return (uint16_t)1000; }
     };
     void (*customShow)(void) = NULL;
+	CRGB* leds;
 
     boolean
       _running,

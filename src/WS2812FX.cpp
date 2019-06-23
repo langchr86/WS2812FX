@@ -56,7 +56,7 @@
 
 void WS2812FX::init() {
   resetSegmentRuntimes();
-  Adafruit_NeoPixel::begin();
+// clang: Adafruit_NeoPixel::begin();
 }
 
 // void WS2812FX::timer() {
@@ -91,31 +91,41 @@ void WS2812FX::service() {
 // overload setPixelColor() functions so we can use gamma correction
 // (see https://learn.adafruit.com/led-tricks-gamma-correction/the-issue)
 void WS2812FX::setPixelColor(uint16_t n, uint32_t c) {
-  if(IS_GAMMA) {
-    uint8_t w = (c >> 24) & 0xFF;
+	    uint8_t w = (c >> 24) & 0xFF;
     uint8_t r = (c >> 16) & 0xFF;
     uint8_t g = (c >>  8) & 0xFF;
     uint8_t b =  c        & 0xFF;
-    Adafruit_NeoPixel::setPixelColor(n, gamma8(r), gamma8(g), gamma8(b), gamma8(w));
+  if(IS_GAMMA) {
+
+// clang: Adafruit_NeoPixel::setPixelColor(n, gamma8(r), gamma8(g), gamma8(b), gamma8(w));
   } else {
-    Adafruit_NeoPixel::setPixelColor(n, c);
+// clang: Adafruit_NeoPixel::setPixelColor(n, c);
   }
+     leds[n].r = r;
+   leds[n].g = g;
+   leds[n].b = b;
 }
 
 void WS2812FX::setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b) {
   if(IS_GAMMA) {
-    Adafruit_NeoPixel::setPixelColor(n, gamma8(r), gamma8(g), gamma8(b));
+// clang: Adafruit_NeoPixel::setPixelColor(n, gamma8(r), gamma8(g), gamma8(b));
   } else {
-    Adafruit_NeoPixel::setPixelColor(n, r, g, b);
+// clang: Adafruit_NeoPixel::setPixelColor(n, r, g, b);
   }
+     leds[n].r = r;
+   leds[n].g = g;
+   leds[n].b = b;
 }
 
 void WS2812FX::setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b, uint8_t w) {
   if(IS_GAMMA) {
-    Adafruit_NeoPixel::setPixelColor(n, gamma8(r), gamma8(g), gamma8(b), gamma8(w));
+// clang: Adafruit_NeoPixel::setPixelColor(n, gamma8(r), gamma8(g), gamma8(b), gamma8(w));
   } else {
-    Adafruit_NeoPixel::setPixelColor(n, r, g, b, w);
+// clang: Adafruit_NeoPixel::setPixelColor(n, r, g, b, w);
   }
+   leds[n].r = r;
+   leds[n].g = g;
+   leds[n].b = b;
 }
 
 void WS2812FX::copyPixels(uint16_t dest, uint16_t src, uint16_t count) {
@@ -128,7 +138,8 @@ void WS2812FX::copyPixels(uint16_t dest, uint16_t src, uint16_t count) {
 // overload show() functions so we can use custom show()
 void WS2812FX::show(void) {
   if(customShow == NULL) {
-    Adafruit_NeoPixel::show();
+// clang: Adafruit_NeoPixel::show();
+	FastLED.show();
   } else {
     customShow();
   }
@@ -174,7 +185,7 @@ void WS2812FX::setSpeed(uint16_t s) {
 }
 
 void WS2812FX::setSpeed(uint8_t seg, uint16_t s) {
-//  resetSegmentRuntime(seg);
+  resetSegmentRuntime(seg);
   _segments[seg].speed = constrain(s, SPEED_MIN, SPEED_MAX);
 }
 
@@ -201,12 +212,12 @@ void WS2812FX::setColor(uint32_t c) {
 }
 
 void WS2812FX::setColor(uint8_t seg, uint32_t c) {
-//  resetSegmentRuntime(seg);
+  resetSegmentRuntime(seg);
   _segments[seg].colors[0] = c;
 }
 
 void WS2812FX::setColors(uint8_t seg, uint32_t* c) {
-//  resetSegmentRuntime(seg);
+  resetSegmentRuntime(seg);
   for(uint8_t i=0; i<NUM_COLORS; i++) {
     _segments[seg].colors[i] = c[i];
   }
@@ -214,7 +225,8 @@ void WS2812FX::setColors(uint8_t seg, uint32_t* c) {
 
 void WS2812FX::setBrightness(uint8_t b) {
   b = constrain(b, BRIGHTNESS_MIN, BRIGHTNESS_MAX);
-  Adafruit_NeoPixel::setBrightness(b);
+// clang: Adafruit_NeoPixel::setBrightness(b);
+  FastLED.setBrightness(b);
   show();
 }
 
@@ -230,16 +242,16 @@ void WS2812FX::decreaseBrightness(uint8_t s) {
 
 void WS2812FX::setLength(uint16_t b) {
   resetSegmentRuntimes();
-  if (b < 1) b = 1;
-
-  // Decrease numLEDs to maximum available memory
-  do {
-      Adafruit_NeoPixel::updateLength(b);
-      b--;
-  } while(!Adafruit_NeoPixel::numLEDs && b > 1);
-
-  _segments[0].start = 0;
-  _segments[0].stop = Adafruit_NeoPixel::numLEDs - 1;
+// clang:   if (b < 1) b = 1;
+// clang: 
+// clang:   // Decrease numLEDs to maximum available memory
+// clang:   do {
+// clang:       Adafruit_NeoPixel::updateLength(b);
+// clang:       b--;
+// clang:   } while(!Adafruit_NeoPixel::numLEDs && b > 1);
+// clang: 
+// clang:   _segments[0].start = 0;
+// clang:   _segments[0].stop = Adafruit_NeoPixel::numLEDs - 1;
 }
 
 void WS2812FX::increaseLength(uint16_t s) {
@@ -427,7 +439,7 @@ void WS2812FX::resetSegmentRuntime(uint8_t seg) {
  * Turns everything off. Doh.
  */
 void WS2812FX::strip_off() {
-  Adafruit_NeoPixel::clear();
+// clang: Adafruit_NeoPixel::clear();
   show();
 }
 
@@ -1452,11 +1464,7 @@ uint16_t WS2812FX::fireworks(uint32_t color) {
  * Firework sparks.
  */
 uint16_t WS2812FX::mode_fireworks(void) {
-  uint32_t color = BLACK;
-  do { // randomly choose a non-BLACK color from the colors array
-    color = SEGMENT.colors[random8(NUM_COLORS)];
-  } while (color == BLACK);
-  return fireworks(color);
+  return fireworks(SEGMENT.colors[0]);
 }
 
 /*
